@@ -6,7 +6,7 @@
 
 #define SOMESIZE	9728000
 
-char buf[SOMESIZE];
+unsigned char buf[SOMESIZE];
 
 int ed2k_hash(unsigned char digest[16], const char *file){
 	FILE *f = fopen(file,"rb");
@@ -19,7 +19,7 @@ int ed2k_hash(unsigned char digest[16], const char *file){
 	int size;
 	int loopNb = 0;
 	md4_init(&all);
-	while(size = fread(buf,1,SOMESIZE,f)){
+	while((size = fread(buf,1,SOMESIZE,f)) != 0){
 		md4_init(&one);
 		md4_update(&one,buf,size);
 		md4_final(oneOut,&one);
@@ -36,3 +36,25 @@ int ed2k_hash(unsigned char digest[16], const char *file){
 	fclose(f);
 	return 0;
 }
+
+int main(int argc, char **argv) {
+    for(int i = 1; i < argc; ++i) {
+        unsigned char digest[16];
+        const char *name = argv[i];
+
+        int result = ed2k_hash(digest, name);
+
+        if(result == 0) {
+            printf("%s: ", name);
+            for(int x = 0; x < sizeof(digest) / sizeof(digest[0]); ++x) {
+                printf("%02x", digest[x]);
+            }
+            printf("\n");
+        } else {
+            printf("%s: CAN_NOT_OPEN_FILE\n", name);
+        }
+    }
+
+    return 0;
+}
+
