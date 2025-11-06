@@ -10,7 +10,7 @@ all : ed2k_hash.exe
 	${CC} -o $@ -c $< -g -O2 -Wall
 
 ed2k_hash.exe : ed2k_hash.o md4.o
-	${CXX} -o $@ $^
+	${CC} -o $@ $^
 
 clean:
 	rm -f *.o
